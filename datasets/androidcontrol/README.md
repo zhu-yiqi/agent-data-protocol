@@ -1,5 +1,3 @@
-Here is the refined version of your project usage instructions in Markdown format:
-
 # Steps to Process
 
 1. **Install Dependencies**
