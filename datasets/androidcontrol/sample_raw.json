@@ -1,7 +1,7 @@
 [
     {
         "episode_id": 0,
-        "goal": "T3BlbiB0aGUgWm9obyBNZWV0IGFwcCAsIHZpZXcgdGhlIHNjaGVkdWxlZCBtZWV0aW5ncyAu",
+        "goal": "Open the Zoho Meet app , view the scheduled meetings .",
         "screenshots": [
             "0/screenshot_0.png",
             "0/screenshot_1.png",
@@ -5127,7 +5127,7 @@
     },
     {
         "episode_id": 20,
-        "goal": "R28gdG8gdGhlIG1vYmlsZSBjYXRlZ29yeSBhZnRlciBjbG9zaW5nIHRoZSBwb3AgdXAgYW5kIGJyb3dzZSB0aGUgcHJvZHVjdHM=",
+        "goal": "Go to the mobile category after closing the pop up and browse the products",
         "screenshots": [
             "20/screenshot_0.png",
             "20/screenshot_1.png",
@@ -82854,7 +82854,7 @@
     },
     {
         "episode_id": 40,
-        "goal": "Q2hlY2sgb3V0IGFsbCBvZiB0aGUgc3VnZ2VzdGVkIHByb2R1Y3RzIGFuZCBjb21wYXJlIHByaWNpbmcgYmVjYXVzZSBJJ20gbG9va2luZyBmb3IgYSBidWRnZXQgZnJpZW5kbHkgc29mYS4=",
+        "goal": "Check out all of the suggested products and compare pricing because I'm looking for a budget friendly sofa.",
         "screenshots": [
             "40/screenshot_0.png",
             "40/screenshot_1.png"

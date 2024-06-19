@@ -53,6 +53,7 @@ def process_tfrecord_file(tfrecord_file):
             continue
 
         # Convert bytes to appropriate data types
+        record['goal'] = record['goal'].decode('utf-8')
         record['actions'] = [json.loads(action) for action in record['actions']]
         record['step_instructions'] = [step_instruction.decode('utf-8') for step_instruction in record['step_instructions']]
 
