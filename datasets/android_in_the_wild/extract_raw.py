@@ -2,18 +2,20 @@
 
 import tensorflow as tf
 import json
+import os
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from typing import Any
 
 #import io
-from PIL import Image
+from PIL import Image, ImageDraw
 import numpy as np
 
 file_names = [ "android-in-the-wild_general_general-00000-of-00321"
              , "android-in-the-wild_general_general-00001-of-00321"
              ]
 output_file = "sample_raw.json"
+os.makedirs("images", exist_ok=True)
 
 def parse_image_data(image_bytes, height, width, nb_channels) -> Image.Image:
     #  function parse_image_data {{{ # 
@@ -44,15 +46,6 @@ for i, rcd in enumerate(dataset):
         data_type: str = ftr.WhichOneof("kind")
         json_dict[k] = list(getattr(ftr, data_type).value)
 
-    # image
-    #parse_image_data( json_dict["image/encoded"][0], json_dict["image/height"][0]
-                    #, json_dict["image/width"][0], json_dict["image/channels"][0]
-                    #).show()
-    json_dict["image/encoded"] = "<image>"
-    json_dict["image/height"] = json_dict["image/height"][0]
-    json_dict["image/width"] = json_dict["image/width"][0]
-    json_dict["image/channels"] = json_dict["image/channels"][0]
-
     # string data
     for k in ["device_type", "results/type_action", "episode_id", "current_activity", "goal_info"]:
         json_dict[k] = json_dict[k][0].decode()
@@ -74,9 +67,35 @@ for i, rcd in enumerate(dataset):
     json_dict["image/ui_annotations_ui_types"] = list(map(bytes.decode, json_dict["image/ui_annotations_ui_types"]))
     json_dict["image/ui_annotations_text"] = list(map(bytes.decode, json_dict["image/ui_annotations_text"]))
 
-    #for k, ftr in json_dict.items():
-        #print(k, ftr)
-    #exit(0)
+    # image
+    json_dict["image/height"] = json_dict["image/height"][0]
+    json_dict["image/width"] = json_dict["image/width"][0]
+    json_dict["image/channels"] = json_dict["image/channels"][0]
+
+    image_file_name: str = "images/{:}-{:d}".format(json_dict["episode_id"], json_dict["step_id"])
+    raw_screenshot: Image.Image =\
+            parse_image_data( json_dict["image/encoded"][0], json_dict["image/height"]
+                            , json_dict["image/width"], json_dict["image/channels"]
+                            )
+    raw_screenshot.save(image_file_name + ".png")
+
+    drawer = ImageDraw.Draw(raw_screenshot, mode="RGB")
+    for bb, lbl in zip( json_dict["image/ui_annotations_positions"]
+                      , json_dict["image/ui_annotations_ui_types"]
+                      ):
+        drawer.rectangle( [ json_dict["image/width"]*bb[1], json_dict["image/height"]*bb[0]
+                          , json_dict["image/width"]*(bb[1]+bb[3]), json_dict["image/height"]*(bb[0]+bb[2])
+                          ]
+                        , outline="red"
+                        )
+        text_position: Tuple[int, int] = (json_dict["image/width"]*bb[1], json_dict["image/height"]*(bb[0]+bb[2]))
+        text_bbox: Tuple[int, int, int, int] = drawer.textbbox(text_position, lbl, anchor="lb")
+        drawer.rectangle(text_bbox, fill="black")
+        drawer.text(text_position, lbl, anchor="lb", fill="white")
+    raw_screenshot.save(image_file_name + "-annotated.png")
+
+    json_dict["image/encoded"] = image_file_name
+
     json_list.append(json_dict)
 
 with open(output_file, "w") as f:
