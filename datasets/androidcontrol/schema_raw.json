@@ -149,7 +149,7 @@
           }
         },
         "required": ["action_type"],
-        "additionalProperties": true
+        "additionalProperties": false
       }
     },
     "step_instructions": {
