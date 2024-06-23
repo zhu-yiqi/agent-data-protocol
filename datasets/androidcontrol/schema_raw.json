@@ -69,7 +69,7 @@
               "required": ["x_min", "x_max", "y_min", "y_max", "center", "width", "height", "area"]
             },
             "hint_text": {
-              "type": "null"
+              "type": ["string", "null"]
             },
             "is_checked": {
               "type": "boolean"
@@ -145,7 +145,21 @@
         "type": "object",
         "properties": {
           "action_type": {
+            "type": "string",
+            "enum": ["click", "open_app", "wait", "scroll", "navigate_back"]
+          },
+          "x": {
+            "type": "integer"
+          },
+          "y": {
+            "type": "integer"
+          },
+          "app_name": {
             "type": "string"
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["up", "down", "left", "right"]
           }
         },
         "required": ["action_type"],

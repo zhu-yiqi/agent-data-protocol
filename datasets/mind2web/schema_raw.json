@@ -1,73 +1,103 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "unique_id": {
+    "website": {
       "type": "string"
     },
-    "image": {
+    "domain": {
       "type": "string"
     },
-    "conversations": {
+    "confirmed_task": {
+      "type": "string"
+    },
+    "annotation_id": {
+      "type": "string"
+    },
+    "action_reprs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "actions": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "from": {
-            "type": "string",
-            "enum": ["human", "gpt"]
-          },
-          "value": {
+          "action_uid": {
             "type": "string"
           },
-          "thoughts": {
+          "cleaned_html": {
             "type": "string"
           },
-          "actions": {
+          "neg_candidates": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "API_name": {
+                "attributes": {
                   "type": "string"
                 },
-                "API_params": {
-                  "type": "object",
-                  "properties": {
-                    "boxes": {
-                      "type": "array",
-                      "items": {
-                        "type": "array",
-                        "items": {
-                          "type": "number"
-                        },
-                        "minItems": 4,
-                        "maxItems": 4
-                      }
-                    },
-                    "prompt": {
-                      "type": "string"
-                    }
-                  }
+                "backend_node_id": {
+                  "type": "string"
+                },
+                "tag": {
+                  "type": "string"
                 }
               },
-              "required": ["API_name", "API_params"]
+              "required": ["attributes", "backend_node_id", "tag"]
             }
+          },
+          "operation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string"
+              },
+              "original_op": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": ["op", "original_op", "value"]
+          },
+          "pos_candidates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "attributes": {
+                  "type": "string"
+                },
+                "backend_node_id": {
+                  "type": "string"
+                },
+                "is_original_target": {
+                  "type": "boolean"
+                },
+                "is_top_level_target": {
+                  "type": "boolean"
+                },
+                "tag": {
+                  "type": "string"
+                }
+              },
+              "required": ["attributes", "backend_node_id", "is_original_target", "is_top_level_target", "tag"]
+            }
+          },
+          "raw_html": {
+            "type": "string"
           }
         },
-        "required": ["from", "value"],
-        "if": {
-          "properties": { "from": { "const": "gpt" } }
-        },
-        "then": {
-          "required": ["thoughts", "actions"]
-        }
+        "required": ["action_uid", "cleaned_html", "neg_candidates", "operation", "pos_candidates", "raw_html"]
       }
     },
-    "data_source": {
+    "subdomain": {
       "type": "string"
     }
   },
-  "required": ["unique_id", "image", "conversations", "data_source"]
-  
+  "required": ["website", "domain", "confirmed_task", "annotation_id", "action_reprs", "actions", "subdomain"]
 }
