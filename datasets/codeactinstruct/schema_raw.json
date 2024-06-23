@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "conversations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["system", "user", "assistant"]
+          }
+        },
+        "required": ["content", "role"]
+      }
+    }
+  },
+  "required": ["id", "conversations"]
+  
+}
