@@ -32,3 +32,20 @@ This sample data will form the basis of our discussion regarding the standardize
 ### Step 2: Write Convertor to Standardized Format
 
 Once we have our standardized format (not yet), we will create a script that converts, line-by-line, a jsonl file in the raw format to one in the standardized format in `raw_to_standardized.py`.
+
+We can then apply this to the sample data to create a sample in the standardized format:
+
+```bash
+export MY_DATASET=dataset_name
+cat datasets/$MY_DATASET/sample_raw.json | python scripts/json_to_jsonl.py | python datasets/$MY_DATASET/raw_to_standardized.py | python scripts/jsonl_to_indented_json.py > datasets/$MY_DATASET/sample.json
+```
+
+Run the validator script on the dataset to ensure that it is in the correct format:
+
+```bash
+pytest tests/test_curated_schemas.py
+```
+
+### Step 3: Write README
+
+Write a README.md file in the dataset directory that describes the dataset, including the source, the format, and any other relevant information.

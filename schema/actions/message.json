@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Message Action",
+  "type": "object",
+  "properties": {
+    "class": {
+      "type": "string",
+      "description": "The class of the action",
+      "enum": ["message_action"]
+    },
+    "content": {
+      "type": "string",
+      "description": "The message to share with the user"
+    },
+    "description": {
+      "type": "string",
+      "description": "The description/thought provided for the action"
+    }
+  },
+  "required": ["class", "content", "description"]
+}
