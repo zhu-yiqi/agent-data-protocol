@@ -1,6 +1,6 @@
-
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 from typing import List
+
 
 class ScreenAgentItem(BaseModel):
     task_prompt: str
@@ -21,5 +21,6 @@ class ScreenAgentItem(BaseModel):
     LLM_response_editer_zh: str
     screenshot: str
 
-class SchemaRaw(BaseModel):
-    __root__: List[ScreenAgentItem]
+
+class SchemaRaw(RootModel):
+    root: List[ScreenAgentItem]

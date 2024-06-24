@@ -1,20 +1,23 @@
-
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
+
 class APIParams(BaseModel):
-    boxes: Optional[List[List[float]]]
-    prompt: Optional[str]
+    boxes: Optional[List[List[float]]] = None
+    prompt: Optional[str] = None
+
 
 class Action(BaseModel):
     API_name: str
     API_params: APIParams
 
+
 class Conversation(BaseModel):
-    from_: str
+    from_: str = Field(..., alias="from")
     value: str
-    thoughts: Optional[str]
-    actions: Optional[List[Action]]
+    thoughts: Optional[str] = None
+    actions: Optional[List[Action]] = None
+
 
 class SchemaRaw(BaseModel):
     unique_id: str

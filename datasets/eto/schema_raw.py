@@ -1,10 +1,11 @@
-
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 
+
 class Conversation(BaseModel):
-    from_: str
+    from_: str = Field(..., alias='from')
     value: str
+
 
 class SchemaRaw(BaseModel):
     id: str

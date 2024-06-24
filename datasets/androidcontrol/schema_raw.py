@@ -1,6 +1,6 @@
-
 from pydantic import BaseModel
 from typing import List, Optional, Union
+
 
 class BBoxPixels(BaseModel):
     x_min: int
@@ -12,13 +12,14 @@ class BBoxPixels(BaseModel):
     height: int
     area: int
 
+
 class AccessibilityTree(BaseModel):
-    text: Optional[Union[str, None]]
-    content_description: Optional[Union[str, None]]
+    text: Optional[Union[str, None]] = None
+    content_description: Optional[Union[str, None]] = None
     class_name: str
-    bbox: Optional[Union[None, None]]
+    bbox: Optional[Union[None, None]] = None
     bbox_pixels: BBoxPixels
-    hint_text: Optional[Union[str, None]]
+    hint_text: Optional[Union[str, None]] = None
     is_checked: bool
     is_checkable: bool
     is_clickable: bool
@@ -31,16 +32,18 @@ class AccessibilityTree(BaseModel):
     is_selected: bool
     is_visible: bool
     package_name: str
-    resource_name: Optional[Union[str, None]]
-    tooltip: Optional[Union[None, None]]
-    resource_id: Optional[Union[None, None]]
+    resource_name: Optional[Union[str, None]] = None
+    tooltip: Optional[Union[None, None]] = None
+    resource_id: Optional[Union[None, None]] = None
+
 
 class Action(BaseModel):
     action_type: str
-    x: Optional[int]
-    y: Optional[int]
-    app_name: Optional[str]
-    direction: Optional[str]
+    x: Optional[int] = None
+    y: Optional[int] = None
+    app_name: Optional[str] = None
+    direction: Optional[str] = None
+
 
 class SchemaRaw(BaseModel):
     episode_id: int
