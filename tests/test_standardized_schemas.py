@@ -1,11 +1,12 @@
 import os
 import json
+from pydantic import ValidationError
 import pytest
-from jsonschema import validate, ValidationError, RefResolver
 from pathlib import Path
 
+from schema.trajectory import Trajectory
+
 DATASET_PATH = Path(__file__).parent.parent / "datasets"
-TRAJECTORY_SCHEMA = Path(__file__).parent.parent / "schema" / "trajectory.json"
 
 
 def get_sample_jsons(directory):
@@ -24,14 +25,11 @@ def load_json(file_path):
 
 @pytest.mark.parametrize("sample_path", get_sample_jsons(DATASET_PATH))
 def test_sample_raw_against_schema(sample_path):
-    schema = load_json(TRAJECTORY_SCHEMA)
     samples = load_json(sample_path)
-    schema_path = f'file:///{os.path.dirname(TRAJECTORY_SCHEMA)}/'
-    resolver = RefResolver(base_uri=schema_path, referrer=schema)
     assert isinstance(samples, list), "sample.json should be a list"
 
     for sample in samples:
         try:
-            validate(instance=sample, schema=schema, resolver=resolver)
+            Trajectory(**sample)
         except ValidationError as e:
             pytest.fail(f"Validation failed for {sample_path}: {str(e)}")
