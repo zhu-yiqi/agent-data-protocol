@@ -33,7 +33,7 @@ This sample data will form the basis of our discussion regarding the standardize
 
 Once we have our standardized format (not yet), we will create a script that converts, line-by-line, a jsonl file in the raw format to one in the standardized format in `raw_to_standardized.py`.
 
-We can then apply this to the sample data to create a sample in the standardized format:
+We can then apply this to the sample data to create a sample in the standardized format.
 
 ```bash
 export MY_DATASET=dataset_name

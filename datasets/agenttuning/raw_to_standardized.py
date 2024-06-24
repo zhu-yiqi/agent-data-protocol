@@ -2,10 +2,16 @@ import json
 import sys
 import re
 
+from schema.action.action import Action
+from schema.action.code import CodeAction
+from schema.action.message import MessageAction
+from schema.observation.observation import Observation
+from schema.observation.text import TextObservation
 
-def convert_step(step: dict[str, str]) -> list[dict[str, str]]:
+
+def convert_step(step: dict[str, str]) -> list[Action | Observation]:
     system_regex = re.match(
-        r"(You are an assistant.*\n\nNow, my problem is:|Now, I will start a new problem in a new OS. My problem is:)\n\n(.*)", # noqa
+        r"(You are an assistant.*\n\nNow, my problem is:|Now, I will start a new problem in a new OS. My problem is:)\n\n(.*)",  # noqa
         step["content"],
         re.DOTALL,
     )
@@ -15,16 +21,8 @@ def convert_step(step: dict[str, str]) -> list[dict[str, str]]:
     )
     if system_regex:
         return [
-            {
-                "class": "text_observation",
-                "content": system_regex.group(1),
-                "source": "system",
-            },
-            {
-                "class": "text_observation",
-                "content": system_regex.group(2),
-                "source": "user",
-            },
+            TextObservation(content=system_regex.group(1), source="system"),
+            TextObservation(content=system_regex.group(2), source="user"),
         ]
     elif code_act_regex:
         code_extract_regex = re.match(
@@ -35,20 +33,18 @@ def convert_step(step: dict[str, str]) -> list[dict[str, str]]:
         )
         if code_extract_regex:
             return [
-                {
-                    "class": "code_action",
-                    "language": "bash",
-                    "content": code_extract_regex.group(1),
-                    "description": code_act_regex.group(1),
-                }
+                CodeAction(
+                    language="bash",
+                    content=code_extract_regex.group(1),
+                    description=code_act_regex.group(1),
+                ),
             ]
         elif answer_extract_regex:
             return [
-                {
-                    "class": "message_action",
-                    "content": answer_extract_regex.group(1),
-                    "description": code_act_regex.group(1),
-                }
+                MessageAction(
+                    content=answer_extract_regex.group(1),
+                    description=code_act_regex.group(1),
+                ),
             ]
         else:
             raise ValueError(
@@ -57,19 +53,11 @@ def convert_step(step: dict[str, str]) -> list[dict[str, str]]:
             )
     elif code_obs_regex:
         return [
-            {
-                "class": "text_observation",
-                "content": code_obs_regex.group(1),
-                "source": "os",
-            }
+            TextObservation(content=code_obs_regex.group(1), source="os"),
         ]
     else:
         return [
-            {
-                "class": "text_observation",
-                "content": step["content"],
-                "source": "user",
-            }
+            TextObservation(content=step["content"], source="user"),
         ]
 
 
