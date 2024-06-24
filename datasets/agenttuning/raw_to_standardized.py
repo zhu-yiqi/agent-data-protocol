@@ -5,7 +5,7 @@ import re
 
 def convert_step(step: dict[str, str]) -> list[dict[str, str]]:
     system_regex = re.match(
-        r"(You are an assistant.*\n\nNow, my problem is:|Now, I will start a new problem in a new OS. My problem is:)\n\n(.*)",
+        r"(You are an assistant.*\n\nNow, my problem is:|Now, I will start a new problem in a new OS. My problem is:)\n\n(.*)", # noqa
         step["content"],
         re.DOTALL,
     )
