@@ -24,13 +24,12 @@ for line in sys.stdin:
     traj: Trajectory = Trajectory(
         id=task_stamp,
         # task=task,
-        # content=[MessageAction(content=sop)],  # fake the sop as the first message
-        content=[]
+        content=[MessageAction(content=task)],  # first message is the task
     )
     for element in raw_traj["trace"]:
         if element["type"] == "state":
             html = element["data"]["html"]
-            url = element.get("url", "")
+            url = element["data"]["url"]
 
             json_state = json.loads(element["data"]["json_state"])
             annotations = []

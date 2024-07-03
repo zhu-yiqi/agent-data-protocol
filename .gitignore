@@ -1,4 +1,5 @@
 .DS_Store
 __pycache__
-datasets/wonderbread/debug_demos/*
+datasets/wonderbread/*demos/*
+datasets/wonderbread/*demos.zip
 datasets/wonderbread/screenshots/*
