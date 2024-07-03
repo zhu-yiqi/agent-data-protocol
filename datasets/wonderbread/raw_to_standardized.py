@@ -7,6 +7,7 @@ from schema.action.action import Action
 from schema.action.api import ApiAction
 from schema.action.message import MessageAction
 from schema.observation.observation import Observation
+from schema.observation.text import TextObservation
 from schema.observation.web import WebObservation
 from schema.observation.image import BoundingBox, ImageObservation, ImageAnnotation
 from schema.trajectory import Trajectory
@@ -24,7 +25,7 @@ for line in sys.stdin:
     traj: Trajectory = Trajectory(
         id=task_stamp,
         # task=task,
-        content=[MessageAction(content=task)],  # first message is the task
+        content=[TextObservation(content=task, source='user')],  # first message is the task
     )
     for element in raw_traj["trace"]:
         if element["type"] == "state":
