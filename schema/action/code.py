@@ -5,8 +5,8 @@ from schema.action.action import Action
 
 
 class CodeAction(Action):
-    language: Literal["bash", "python"] = Field(
-        ..., description="The language of the code to execute"
+    language: str = Field(
+        ..., description="The language of the code to execute" # code_feedback is multilingual
     )
     content: str = Field(..., description="The code to execute")
     description: str = Field(
