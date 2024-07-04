@@ -36,8 +36,9 @@ for example in dataset_llava_plus:
                 break
     dataset.append(cleaned_example)
 
-print("Final dataset size:", len(dataset))
-print("Number of removed examples:", removed_num_examples)
+# For debugging
+# print("Final dataset size:", len(dataset))
+# print("Number of removed examples:", removed_num_examples)
 
 
 for sample in dataset:
