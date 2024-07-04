@@ -1,9 +1,9 @@
-def sam(bbox: list[list]) -> None:
+def sam(boxes: list[list]) -> None:
     """Call SAM (Segment Anything Model) to detect objects.
 
     Args:
     ----
-        bbox (list[list]): An array of bounding box coordinates.
+        boxes (list[list]): A list of arrays of bounding box coordinates.
 
     """
     pass
