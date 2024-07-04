@@ -40,6 +40,5 @@ for example in dataset_llava_plus:
 # print("Final dataset size:", len(dataset))
 # print("Number of removed examples:", removed_num_examples)
 
-
 for sample in dataset:
     print(json.dumps(sample))
