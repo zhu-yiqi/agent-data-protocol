@@ -25,7 +25,9 @@ for line in sys.stdin:
     traj: Trajectory = Trajectory(
         id=task_stamp,
         # task=task,
-        content=[TextObservation(content=task, source='user')],  # first message is the task
+        content=[
+            TextObservation(content=task, source="user")
+        ],  # first message is the task
     )
     for element in raw_traj["trace"]:
         if element["type"] == "state":
