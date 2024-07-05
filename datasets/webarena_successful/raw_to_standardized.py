@@ -20,9 +20,7 @@ for line in sys.stdin:
     model = raw_traj["source"]
     traj = Trajectory(
         id=str(raw_traj["task_id"]),
-        content=[
-            TextObservation(content=task, source='user')
-        ],
+        content=[TextObservation(content=task, source="user")],
     )
     for element in raw_traj["trajectory"]:
         if "action" in element:
@@ -34,13 +32,15 @@ for line in sys.stdin:
             action = ApiAction(
                 function=function,
                 kwargs=kwargs,
-                description=element['metadata'].get('cot', ''),
+                description=element["metadata"].get("cot", ""),
             )
             traj.content.append(action)
-        elif 'url' in element:
-            url = element['url']
-            html = element['axtree']
-            screenshot_path = element['screenshot_path'].replace("demo_trajs/images/", f"{root}/screenshots")
+        elif "url" in element:
+            url = element["url"]
+            html = element["axtree"]
+            screenshot_path = element["screenshot_path"].replace(
+                "demo_trajs/images/", f"{root}/screenshots"
+            )
             img_obs = ImageObservation(
                 content=screenshot_path,
                 annotations=[],
@@ -56,6 +56,6 @@ for line in sys.stdin:
         else:
             raise ValueError(f"Unknown element type: {element}")
     trajs.append(traj)
-    
+
 for traj in trajs:
     print(traj.model_dump_json())
