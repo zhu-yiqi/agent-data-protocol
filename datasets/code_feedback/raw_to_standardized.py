@@ -28,7 +28,7 @@ def convert_step(step: dict[str, str]) -> list[Action | Observation]:
         if code_extract_regex and code_extract_regex.group(2):
             return [
                 CodeAction(
-                    language=code_extract_regex.group(2),
+                    language=code_extract_regex.group(2).lower(),
                     content=code_extract_regex.group(3),
                     description=code_extract_regex.group(1),
                 )
@@ -42,7 +42,6 @@ def convert_step(step: dict[str, str]) -> list[Action | Observation]:
             ]
     else:
         raise Exception("Invalid role.")
-
 
 for line in sys.stdin:
     raw_data = json.loads(line)
