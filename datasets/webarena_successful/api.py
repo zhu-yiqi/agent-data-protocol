@@ -87,12 +87,12 @@ def new_tab(url: str) -> None:
     pass
 
 
-def tab_focus(index: int) -> None:
-    """Focus on the tab with the given index.
+def tab_focus(page_number: int) -> None:
+    """Focus on the tab with the given page_number.
 
     Args:
     ----
-        index (int): The index of the tab to focus on. Starts from 0.
+        page_number (int): The page_number of the tab to focus on. Starts from 0.
 
     """
     pass

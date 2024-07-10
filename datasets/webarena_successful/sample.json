@@ -23,15 +23,7 @@
       {
         "function": "stop",
         "kwargs": {
-          "action_type": 17,
-          "text": [],
-          "page_number": 0,
-          "url": "",
-          "element_id": "",
-          "key_comb": "",
-          "direction": "",
-          "answer": "Quest Lumaflex\u2122 Band",
-          "raw_prediction": ""
+          "answer": "Quest Lumaflex\u2122 Band"
         },
         "description": "Let's think step-by-step. We need to find the top-1 best-selling product in 2022. The provided information includes a table under the tab 'Bestsellers' with columns 'Product', 'Price', and 'Quantity'. The product 'Quest Lumaflex\u2122 Band' with a price of $19.00 and a quantity of 6 is listed in this table.\n\nSince this product appears in the 'Bestsellers' tab and it is the only product listed, it is reasonable to conclude that 'Quest Lumaflex\u2122 Band' is the top-1 best-selling product."
       }
@@ -61,15 +53,7 @@
       {
         "function": "click",
         "kwargs": {
-          "action_type": 6,
-          "text": [],
-          "page_number": 0,
-          "url": "",
-          "element_id": "1121",
-          "key_comb": "",
-          "direction": "",
-          "answer": "",
-          "raw_prediction": ""
+          "element_id": "1121"
         },
         "description": "Let's think step-by-step. On the current page, we are on the admin dashboard of the Magento website. We need to find the top-1 best-selling product in 2022. To do that, we need to go to the \"Bestsellers\" tab on the dashboard. From there, we can find the information we need."
       },
@@ -89,15 +73,7 @@
       {
         "function": "stop",
         "kwargs": {
-          "action_type": 17,
-          "text": [],
-          "page_number": 0,
-          "url": "",
-          "element_id": "",
-          "key_comb": "",
-          "direction": "",
-          "answer": "Quest Lumaflex\u2122 Band",
-          "raw_prediction": ""
+          "answer": "Quest Lumaflex\u2122 Band"
         },
         "description": ""
       }
@@ -127,15 +103,7 @@
       {
         "function": "stop",
         "kwargs": {
-          "action_type": 17,
-          "text": [],
-          "page_number": 0,
-          "url": "",
-          "element_id": "",
-          "key_comb": "",
-          "direction": "",
-          "answer": "Quest Lumaflex\u2122 Band",
-          "raw_prediction": ""
+          "answer": "Quest Lumaflex\u2122 Band"
         },
         "description": "Let's think step-by-step. This page is the admin dashboard of a Magento website. It provides various information about the website's performance and sales. The best-selling products are listed under the \"Bestsellers\" tab. The top-1 best-selling product in 2022 is \"Quest Lumaflex\u2122 Band\" with a price of $19.00 and a quantity of 6. I think I have achieved the objective. I will issue the stop action with the answer."
       }

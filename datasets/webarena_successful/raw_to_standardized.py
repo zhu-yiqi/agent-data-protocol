@@ -26,9 +26,25 @@ for line in sys.stdin:
         if "action" in element:
             function = element["action"]["action_name"]
             kwargs = {}
-            for k, v in element["action"].items():
-                if k != "action_name":
-                    kwargs[k] = v
+
+            if function == "stop":
+                kwargs["answer"] = element["action"]["answer"]
+            elif function == "type":
+                kwargs["text"] = element["action"]["text"]
+                kwargs["element_id"] = element["action"]["element_id"]
+            elif function in ["hover", "click"]:
+                kwargs["element_id"] = element["action"]["element_id"]
+            elif function == "scroll":
+                kwargs["direction"] = element["action"]["direction"]
+            elif function == "press":
+                kwargs["key_comb"] = element["action"]["key_comb"]
+            elif function in ["new_tab", "goto"]:
+                kwargs["url"] = element["action"]["url"]
+            elif function == "tab_focus":
+                kwargs["page_number"] = element["action"]["page_number"]
+            else:
+                raise ValueError(f"Unknown function: {function}")
+
             action = ApiAction(
                 function=function,
                 kwargs=kwargs,
