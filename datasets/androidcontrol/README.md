@@ -6,25 +6,42 @@
      pip install -r requirements.txt
      ```
 
-2. **Copy or Download TFRecord Files**
+2. **(Optional) Copy or Download TFRecord Files**
    - Retrieve the TFRecord files from Google Cloud.
-   - Place all the files into the `android_control` folder. You can also use the sample files provided there.
+   - Place all the files into the `android_control` folder. You can also use the sample files provided there for testing.
+   - Alternatively, you can directly iterate the data by this code:
+   ```sh
+   tfrecord_files_remote= tf.io.gfile.glob('gs://gresearch/android_control/android_control*')
+   ```
 
 3. **Set Up Latest android_env**
    - Navigate to the `android_env_utils` directory and install it (have included there):
      ```sh
+     
+     cd agent-data-collection/datasets/androidcontrol/android_env_utils
+     python setup.py install
+     
+     # or (Windows)
+     
      cd agent-data-collection/datasets/androidcontrol/android_env_utils
       setup.py install
      
-     # or 
+     # or
      
      cd agent-data-collection/datasets/androidcontrol/android_env_utils
        pip install .
         ```
+     
+If you encouter an error about loading from the google package, please update protobuf to the latest version:
 
+```sh
+pip install --upgrade protobuf
+     
+  ```
 
 
 4. **Run the Script**
+   - Before you starting to run, choose whether you want to directly dump the json file, or print the data out, and whether you downloaded or the tf files, or want to iterate without pre-downloads.
    - Execute the `extract_raw.py` script to process the data:
      ```sh
      python extract_raw.py
