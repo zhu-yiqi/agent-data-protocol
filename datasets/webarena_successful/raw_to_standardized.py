@@ -1,5 +1,6 @@
 import json
 import sys
+
 from typing import Any
 
 from schema.action.action import Action
