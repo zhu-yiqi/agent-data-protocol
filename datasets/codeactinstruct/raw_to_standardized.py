@@ -11,7 +11,7 @@ from schema.trajectory import Trajectory
 
 
 TOOL_DESCRIPTION = "Tool function available (already imported in <execute> environment):"
-WARNING_MSG = "Observation:\nI don't understand your input. \nIf you want to execute code, please use <execute> YOUR_CODE_HERE </execute>.\nIf you want to give me an answer, please use <solution> YOUR_SOLUTION_HERE </solution>.\nFor example: The answer to the question is <solution> 42 </solution>."
+WARNING_MSG = "Observation:\nI don't understand your input. \nIf you want to execute code, please use <execute_ipython> YOUR_CODE_HERE </execute_ipython>.\nIf you want to give me an answer, please use <solution> YOUR_SOLUTION_HERE </solution>.\nFor example: The answer to the question is <solution> 42 </solution>."
 
 def convert_step(step: dict[str, str]) -> list[Action | Observation]:
     global APIS
@@ -23,13 +23,15 @@ def convert_step(step: dict[str, str]) -> list[Action | Observation]:
             splited = system_msg.split(TOOL_DESCRIPTION, maxsplit=1)
             system_msg = splited[0].rstrip()
             APIS.add(splited[1])
-
+        system_msg = re.sub(r'<execute>', r'<execute_ipython>', system_msg)
+        system_msg = re.sub(r'</execute>', r'</execute_ipython>', system_msg)
         return [
             TextObservation(content=system_msg, source=step["role"]),
         ]
 
     assert step["role"] in ["assistant", "user"], f"Invalid role: {step['role']}"
-
+    step["content"] = re.sub(r'<execute>', r'<execute_ipython>', step["content"])
+    step["content"] = re.sub(r'</execute>', r'</execute_ipython>', step["content"])
     task_regex = re.match(r"Task:\n(.*)", step["content"], re.DOTALL)
     solution_regex = re.match(r"(.*)<solution>(.*)</solution>", step["content"], re.DOTALL)
     execute_regex = re.match(r"(.*)<execute>(.*)</execute>", step["content"], re.DOTALL)
@@ -45,13 +47,13 @@ def convert_step(step: dict[str, str]) -> list[Action | Observation]:
         solution = solution_regex.group(2).strip()
         if "<execute>" not in thought:
             return [
-                MessageAction(content=solution, description=thought or ''),
+                MessageAction(content=f'<solution> {solution} </solution>', description=thought or ''),
             ]
         else:
             # some of the thoughts contains <execute> tag which could be confusing
             # to model for training, so i did not include thought for solution
             return [
-                MessageAction(content=solution, description=''),
+                MessageAction(content=f'<solution> {solution} </solution>', description=''),
             ]
 
     elif execute_regex:
