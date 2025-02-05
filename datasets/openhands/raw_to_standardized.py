@@ -3,6 +3,7 @@ import sys
 import json
 import api
 import inspect
+import markdown
 
 import time
 from schema.action.api import ApiAction
@@ -15,6 +16,20 @@ from schema.trajectory import Trajectory
 from schema_raw import SchemaRaw, Args
 
 from browsergym.utils.obs import flatten_axtree_to_str, flatten_dom_to_str
+
+
+ACTION_MAP = {
+    "fill": "type",
+    "select_option": "select",
+}
+
+KWARGS_MAP = {
+    "bid": "element_id",
+    "value": "text",
+    "delta_x": "dx",
+    "delta_y": "dy",
+    "options": "value",
+}
 
 
 # click('48', 'example with "quotes" and, a comma', 10, button='middle', modifiers=['Shift', 'Alt'])
@@ -30,7 +45,7 @@ def parse_browser_action(action_str):
     call_node = action_ast.body
     function_name = call_node.func.id
     args = [ast.literal_eval(arg) for arg in call_node.args]
-    kwargs = {kw.arg: ast.literal_eval(kw.value) for kw in call_node.keywords}
+    kwargs = {KWARGS_MAP.get(kw.arg, kw.arg): ast.literal_eval(kw.value) for kw in call_node.keywords}
     return function_name, args, kwargs
 
 
@@ -46,14 +61,15 @@ def process_data(data, keep_all=False):
         if not keep_all and item.source == "environment":
             continue
         if not item.action and (item.observation or item.log or item.message or item.content or item.error or item.error_code or item.status):
-            # TODO: if item.observation == "browse", output WebObservation
-            # also custom TextObservation for "run", "run_ipython", "agent_state_changed"
             if item.observation == "browse":
+                _html = flatten_dom_to_str(item.extras.dom_object) if item.extras.dom_object else None
+                if not _html and item.content.strip():
+                    _html = markdown.markdown(item.content)
                 content.append(
                     WebObservation(
                         source=item.source,
                         url=item.extras.url,
-                        html=None if not item.extras.dom_object else flatten_dom_to_str(item.extras.dom_object),
+                        html=_html,
                         axtree=None if not item.extras.axtree_object else flatten_axtree_to_str(item.extras.axtree_object),
                         image_observation=None if not item.extras.screenshot else ImageObservation(
                             source=item.source,
@@ -174,6 +190,7 @@ def process_data(data, keep_all=False):
             if not action:
                 continue
             if '\n' in action:
+                # if there are multiple actions, simply pass them to the browse_interactive function
                 content.append(
                     ApiAction(
                         function="browse_interactive",
@@ -187,6 +204,7 @@ def process_data(data, keep_all=False):
                 function_name, args, kwargs = parse_browser_action(action)
                 if not function_name:
                     continue
+                function_name = ACTION_MAP.get(function_name, function_name)
                 api_args = list(inspect.signature(getattr(api, function_name)).parameters.keys())
                 kwargs = {k: v for k, v in kwargs.items() if k in api_args}
                 for arg in zip(args, api_args):
