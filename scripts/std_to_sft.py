@@ -167,17 +167,24 @@ def standardized_event_to_openhands_message(
         # I had this earlier to include source in the message, but OpenHands does not have that and has bash executions as user messages
         # return {"role": event.source, "content": event.content} if event.source == "user" or event.source=='system' else {"role": "user", "content": f"OBSERVATION from {event.source}: {event.content}"}
 
+        # Check if this is a system message containing function descriptions
+        if event.source == "system" and (
+            "<function=" in event.content
+            or "<function_calls>" in event.content
+            or "<invoke name=" in event.content
+        ):
+            return {"from": "function_call", "value": event.content}
+
         if event.source == "user":
             event.source = "human"
 
         if event.source == "assistant":
             event.source = "gpt"
 
-        return (
-            {"from": event.source, "value": event.content}
-            if event.source in ["human", "gpt"]
-            else {"from": "human", "value": f"{event.content}"}
-        )
+        if event.source == "system":
+            return {"from": "human", "value": f"{event.content}"}
+        else:
+            return {"from": event.source, "value": event.content}
 
     elif hasattr(event, "__class__") and event.__class__.__name__ == "ImageObservation":
         # Handle ImageObservation
@@ -251,8 +258,12 @@ def process_row(line, is_web, chunk, keep_system, api_env=None):
                             + "\n"
                             + message["value"].replace("THOUGHT: ", "")
                         )
+                        # Check if function_call key exists
+                        if "function_call" not in conversations[-1]:
+                            # First function call, just add the message value
+                            continue
                         # if the previous event contains only one function call
-                        if isinstance(conversations[-1]["function_call"], str):
+                        elif isinstance(conversations[-1]["function_call"], str):
                             conversations[-1]["function_call"] = [
                                 conversations[-1]["function_call"],
                                 message["function_call"],
