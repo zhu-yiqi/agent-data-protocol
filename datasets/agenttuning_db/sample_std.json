@@ -5,7 +5,7 @@
       {
         "class_": "text_observation",
         "content": "I will ask you a question, then you should help me operate a MySQL database with SQL to answer the question.\nYou have to explain the problem and your solution to me and write down your thoughts.\nAfter thinking and explaining thoroughly, every round you can choose to operate or to answer.\nyour operation should be like this:\n\n<execute_mysql>\nSELECT * FROM table WHERE condition;\n</excute_mysql>\nYou MUST put SQL in markdown format without any other comments. Your SQL should be in one line.\nEvery time you can only execute one SQL statement. I will only execute the statement in the first SQL code block. Every time you write a SQL, I will execute it for you and give you the output.\nIf you are done operating, and you want to commit your final answer, then write down:\n\n<solution> [\\\"ANSWER1\\\", \\\"ANSWER2\\\", ...] </solution>\nDO NOT write this pattern unless you are sure about your answer. I expect an accurate and correct answer.\nYour answer should be accurate. Your answer must be exactly the same as the correct answer.\nIf the question is about modifying the database, then after done operation, your answer field can be anything.\nIf your response cannot match any pattern I mentioned earlier, you will be judged as FAIL immediately.",
-        "source": "system"
+        "source": "environment"
       },
       {
         "class_": "text_observation",
@@ -13,6 +13,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "Ok.",
         "description": null
       },
@@ -22,6 +23,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "<finish> <solution> [\"none\"] </solution> </finish>",
         "description": "Updated the discount percentage to 20.50 for the product 'ABC1234' in the Products table.\n"
       }
@@ -34,7 +36,7 @@
       {
         "class_": "text_observation",
         "content": "I will ask you a question, then you should help me operate a MySQL database with SQL to answer the question.\nYou have to explain the problem and your solution to me and write down your thoughts.\nAfter thinking and explaining thoroughly, every round you can choose to operate or to answer.\nyour operation should be like this:\n\n<execute_mysql>\nSELECT * FROM table WHERE condition;\n</excute_mysql>\nYou MUST put SQL in markdown format without any other comments. Your SQL should be in one line.\nEvery time you can only execute one SQL statement. I will only execute the statement in the first SQL code block. Every time you write a SQL, I will execute it for you and give you the output.\nIf you are done operating, and you want to commit your final answer, then write down:\n\n<solution> [\\\"ANSWER1\\\", \\\"ANSWER2\\\", ...] </solution>\nDO NOT write this pattern unless you are sure about your answer. I expect an accurate and correct answer.\nYour answer should be accurate. Your answer must be exactly the same as the correct answer.\nIf the question is about modifying the database, then after done operation, your answer field can be anything.\nIf your response cannot match any pattern I mentioned earlier, you will be judged as FAIL immediately.",
-        "source": "system"
+        "source": "environment"
       },
       {
         "class_": "text_observation",
@@ -42,6 +44,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "Ok.",
         "description": null
       },
@@ -51,6 +54,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "<finish> <solution> [\"INSERT INTO OnlineStore (ProductID, ProductName, ProductPrice, ProductCategory) VALUES ('1001', 'T-Shirt', '15.99', 'Clothing')\"] </solution> </finish>",
         "description": "The record has been added to the OnlineStore table.\n"
       }
@@ -63,7 +67,7 @@
       {
         "class_": "text_observation",
         "content": "I will ask you a question, then you should help me operate a MySQL database with SQL to answer the question.\nYou have to explain the problem and your solution to me and write down your thoughts.\nAfter thinking and explaining thoroughly, every round you can choose to operate or to answer.\nyour operation should be like this:\n\n<execute_mysql>\nSELECT * FROM table WHERE condition;\n</excute_mysql>\nYou MUST put SQL in markdown format without any other comments. Your SQL should be in one line.\nEvery time you can only execute one SQL statement. I will only execute the statement in the first SQL code block. Every time you write a SQL, I will execute it for you and give you the output.\nIf you are done operating, and you want to commit your final answer, then write down:\n\n<solution> [\\\"ANSWER1\\\", \\\"ANSWER2\\\", ...] </solution>\nDO NOT write this pattern unless you are sure about your answer. I expect an accurate and correct answer.\nYour answer should be accurate. Your answer must be exactly the same as the correct answer.\nIf the question is about modifying the database, then after done operation, your answer field can be anything.\nIf your response cannot match any pattern I mentioned earlier, you will be judged as FAIL immediately.",
-        "source": "system"
+        "source": "environment"
       },
       {
         "class_": "text_observation",
@@ -71,6 +75,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "Ok.",
         "description": null
       },
@@ -80,6 +85,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "<finish> <solution> [\"none\"] </solution> </finish>",
         "description": "New record created in the table 'Books'\n"
       }
@@ -92,7 +98,7 @@
       {
         "class_": "text_observation",
         "content": "I will ask you a question, then you should help me operate a MySQL database with SQL to answer the question.\nYou have to explain the problem and your solution to me and write down your thoughts.\nAfter thinking and explaining thoroughly, every round you can choose to operate or to answer.\nyour operation should be like this:\n\n<execute_mysql>\nSELECT * FROM table WHERE condition;\n</excute_mysql>\nYou MUST put SQL in markdown format without any other comments. Your SQL should be in one line.\nEvery time you can only execute one SQL statement. I will only execute the statement in the first SQL code block. Every time you write a SQL, I will execute it for you and give you the output.\nIf you are done operating, and you want to commit your final answer, then write down:\n\n<solution> [\\\"ANSWER1\\\", \\\"ANSWER2\\\", ...] </solution>\nDO NOT write this pattern unless you are sure about your answer. I expect an accurate and correct answer.\nYour answer should be accurate. Your answer must be exactly the same as the correct answer.\nIf the question is about modifying the database, then after done operation, your answer field can be anything.\nIf your response cannot match any pattern I mentioned earlier, you will be judged as FAIL immediately.",
-        "source": "system"
+        "source": "environment"
       },
       {
         "class_": "text_observation",
@@ -100,6 +106,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "Ok.",
         "description": null
       },
@@ -109,6 +116,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "<finish> <solution> [\"INSERT INTO Customers (first_name, last_name, email, age, city) VALUES ('Emily', 'Johnson', 'emilyjohnson@example.com', 25, 'New York')\"] </solution> </finish>",
         "description": "A new record has been inserted into the 'Customers' table.\n"
       }
@@ -121,7 +129,7 @@
       {
         "class_": "text_observation",
         "content": "I will ask you a question, then you should help me operate a MySQL database with SQL to answer the question.\nYou have to explain the problem and your solution to me and write down your thoughts.\nAfter thinking and explaining thoroughly, every round you can choose to operate or to answer.\nyour operation should be like this:\n\n<execute_mysql>\nSELECT * FROM table WHERE condition;\n</excute_mysql>\nYou MUST put SQL in markdown format without any other comments. Your SQL should be in one line.\nEvery time you can only execute one SQL statement. I will only execute the statement in the first SQL code block. Every time you write a SQL, I will execute it for you and give you the output.\nIf you are done operating, and you want to commit your final answer, then write down:\n\n<solution> [\\\"ANSWER1\\\", \\\"ANSWER2\\\", ...] </solution>\nDO NOT write this pattern unless you are sure about your answer. I expect an accurate and correct answer.\nYour answer should be accurate. Your answer must be exactly the same as the correct answer.\nIf the question is about modifying the database, then after done operation, your answer field can be anything.\nIf your response cannot match any pattern I mentioned earlier, you will be judged as FAIL immediately.",
-        "source": "system"
+        "source": "environment"
       },
       {
         "class_": "text_observation",
@@ -129,6 +137,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "Ok.",
         "description": null
       },
@@ -138,6 +147,7 @@
         "source": "user"
       },
       {
+        "class_": "message_action",
         "content": "<finish> <solution> [\"INSERT INTO Employees (first_name, last_name, position, salary) VALUES ('Emily', 'Johnson', 'Software Developer', '$60,000')\"] </solution> </finish>",
         "description": "The employee 'Emily Johnson' with position 'Software Developer' and salary '$60,000' has been added to the Employees table.\n"
       }
