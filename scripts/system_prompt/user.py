@@ -20,11 +20,6 @@ In order to accomplish my goal I need to send the information asked back to the 
 def get_web_user_message(
     error_prefix: str, cur_url: str, cur_axtree_txt: str, prev_action_str: str
 ) -> str:
-    previous_actions = (
-        f"# Previous Actions\n{prev_action_str}"
-        if "\n# Previous Actions" not in cur_axtree_txt
-        else ""
-    )
     prompt = f"""\
 {error_prefix}
 
@@ -34,17 +29,14 @@ def get_web_user_message(
 # Current Accessibility Tree:
 {cur_axtree_txt}
 
-{previous_actions}
+# Previous Actions
+{prev_action_str}
 
 Here is an example with chain of thought of a valid action when clicking on a button:
 "
-THOUGHT: In order to accomplish my goal I need to click on the button with bid 12
-
-ACTION:
-```click("12")```
+In order to accomplish my goal I need to click on the button with bid 12
+<function=browser>\n<parameter=code>\nclick(bid="12")\n</parameter>\n</function>
 "
-
-If you do not have a proper THOUGHT for your action, you can directly provide the ACTION.
 """.strip()
     if USE_CONCISE_ANSWER:
         prompt += CONCISE_INSTRUCTION
