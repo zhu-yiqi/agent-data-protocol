@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import re
 import sys
@@ -148,7 +149,9 @@ def extract_thought_and_action(content: str) -> Tuple[str, str]:
     return "", ""
 
 
-def convert_step(step: dict[str, str]) -> list[Action | Observation]:
+def convert_step(
+    idx: str, step: dict[str, str], context: str = "", save_thoughts: dict = {}
+) -> list[Action | Observation]:
     # parse system prompt
     system_regex = re.match(
         r"(Interact with a household to solve a task.*)",  # noqa
@@ -192,11 +195,20 @@ def convert_step(step: dict[str, str]) -> list[Action | Observation]:
         ]
 
 
+GENERATED_THOUGHTS_FILE = os.path.join(os.path.dirname(__file__), "generated_thoughts.json")
+if os.path.exists(GENERATED_THOUGHTS_FILE):
+    with open(GENERATED_THOUGHTS_FILE) as f:
+        GENERATED_THOUGHTS = json.load(f)
+else:
+    GENERATED_THOUGHTS = {}
 for line in sys.stdin:
     raw_data = json.loads(line)
     content = []
-    for step in raw_data["conversations"]:
-        content.extend(convert_step(step))
+    id = raw_data["id"]
+    if id not in GENERATED_THOUGHTS:
+        GENERATED_THOUGHTS[id] = {}
+    for idx, step in enumerate(raw_data["conversations"]):
+        content.extend(convert_step(f"{idx}", step, f"{content}", GENERATED_THOUGHTS[id]))
 
     # Handle finish actions for natural language based tasks
     if (isinstance(content[-1], TextObservation) and content[-1].source == "agent") or isinstance(

@@ -12,9 +12,11 @@ from schema.trajectory import Trajectory
 
 
 def process_data(data):
+    id = data.instance_id
     content = []
     parallel_tool_count = 0
-    for msg in data.messages:
+    for idx, msg in enumerate(data.messages):
+        idx = str(idx)
         if msg.role == "system":
             continue
         elif msg.role in ["user", "tool"]:
@@ -55,18 +57,20 @@ def process_data(data):
                         )
                     elif tool_call.function.name == "execute_bash":
                         parallel_tool_count += 1
+                        thought = msg.content
                         content.append(
                             CodeAction(
                                 language="bash",
                                 content=kwargs["command"],
-                                description=msg.content,
+                                description=thought,
                             )
                         )
                     else:
                         parallel_tool_count += 1
+                        thought = msg.content
                         content.append(
                             ApiAction(
-                                description=msg.content,
+                                description=thought,
                                 function=tool_call.function.name,
                                 kwargs=kwargs,
                             )
@@ -143,7 +147,7 @@ def process_data(data):
         content.extend(assistant_end_message)
 
     return Trajectory(
-        id=data.instance_id,
+        id=id,
         content=content,
         details={
             "run_id": data.run_id,
