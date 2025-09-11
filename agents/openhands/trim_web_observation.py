@@ -81,7 +81,7 @@ def parse_line(line):
         line_copy["id"] = line_copy["id"] + f"-{i}"
         line_copy["conversations"] = trim(c)
         out.append(line_copy)
-    # print(len(f"{line}"), len(f"{out[-1]}"), f'{[total_length(line_copy["conversations"]) + len(line_copy["system"]) for line_copy in out]}')
+    # print(len(f"{line}"), len(f"{out[-1]}"), f'{[total_length(l["conversations"]) + len(l["system"]) for l in out]}')
     return out
 
 
