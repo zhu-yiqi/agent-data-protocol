@@ -1,181 +1,225 @@
-# agent-data-collection
+# Agent Data Protocol (ADP)
 
-This is a repository for agent training data collection by CMU, OSU, and HKU.
+A standardized protocol for collecting, processing, and converting agent training data from diverse sources into unified formats suitable for supervised fine-tuning (SFT).
 
-- `datasets/`: Contains datasets, each with at least the following elements
-  - `README.md`: A description of the dataset
-  - `sample_raw.json`: 2-5 raw samples from the corpus in the original format
-  - `extract_raw.py`: A script that extracts a raw jsonl file from the corpus
-  - If `raw_to_standardized.py` exists (a script that converts the raw jsonl file to our standardized format jsonl):
-    - `sample_std.json`: 2-5 samples from the corpus in our standardized format
-  - If `sample_std.json` exists:
-    - `sample_sft.json`: 2-5 samples from the corpus in the SFT format
-  - Note: There should not be other .json files checked in to the dataset directory
-- `schema/`: Contains schema definitions for the standardized format
-- `scripts/`:
-  - `jsonl_to_indented_json.py`: Converts a jsonl file to an indented json file for easier viewing
-  - `json_to_jsonl.py`: Converts a json file to a jsonl file
-  - `std_to_sft.py`: Converts standardized format to SFT format
-  - `install_hooks.sh`: Script to install pre-commit hooks
-- `std_to_sft_scripts_swe-agent/`: Contains specialized scripts for SWE agent datasets
-  - `std_to_sft_SWE_smith.py`: Converts standardized format to SFT format specifically for SWE agent datasets (SWE-Gym_OpenHands-Sampled-Trajectories, SWE-smith_5kTrajectories, code_feedback, codeactinstruct, nebius_SWE-agent-trajectories, openhands)
+## Recent Release
+- Check out our arXiv preprint: [https://arxiv.org/abs/2510.24702](https://arxiv.org/abs/2510.24702)
 
-## Development Setup
+- Try a demo of data conversion on our Project Website: [https://www.agentdataprotocol.com/](https://www.agentdataprotocol.com/)
 
-### Pre-commit Hooks
+- Download ADP data: [https://huggingface.co/collections/neulab/agent-data-protocol](https://huggingface.co/collections/neulab/agent-data-protocol)
 
-This repository uses pre-commit hooks to ensure code quality. To install the hooks, run:
+## Overview
+
+The Agent Data Protocol provides a systematic approach to handle agent training data across different domains, environments, and agent architectures. It standardizes the representation of agent trajectories, actions, and observations, enabling seamless conversion between raw datasets and agent-specific training formats.
+
+### Key Features
+
+- **Standardized Schema**: Unified representation for agent actions and observations across different domains
+- **Multi-Agent Support**: Convert data for different agent architectures (OpenHands, SWE-agent, AgentLab, etc.)
+- **Type Safety**: Pydantic-based validation ensures data integrity throughout the pipeline
+- **Extensible**: Easy to add new datasets and agent implementations
+- **Quality Control**: Built-in validation and testing framework
+
+## Quick Start
+
+### Installation
 
 ```bash
-./scripts/install_hooks.sh
+git clone https://github.com/neulab/agent-data-protocol.git
+cd agent-data-protocol
+pip install -r requirements.txt
 ```
 
-This will install pre-commit and set up the hooks defined in `.pre-commit-config.yaml`.
+### Basic Usage
 
-## Adding a new dataset
-
-### Step 1: Create Sample Data
-
-To add a new dataset, the first step is to create sample data in order `extract_raw.py`, which will
-output a jsonl file containing the raw data. You can view
-[datasets/mind2web/extract_raw.py](datasets/mind2web/extract_raw.py) for an example.
-
-Once you have created this, run the following command to create a sample (ignore the BrokenPipeError):
+To obtain data for a specific dataset and agent, follow this pattern:
 
 ```bash
-export MY_DATASET=dataset_name
-python datasets/$MY_DATASET/extract_raw.py | head -n 3 | python scripts/jsonl_to_indented_json.py > datasets/$MY_DATASET/sample_raw.json
-```
+# Set your dataset name
+export MY_DATASET=swe-smith
+mkdir -p datasets/$MY_DATASET/full_sft
 
-This sample data will form the basis of our discussion regarding the standardized dataset format.
-
-### Step 2: Write Convertor to Standardized Format
-
-Once you have created the sample raw data, you need to write a converter to transform it into our standardized format. The standardized format is defined in the `schema/` directory.
-
-To create a converter, create a file called `raw_to_standardized.py` in your dataset directory. This script should:
-
-1. Read the raw data from stdin
-2. Convert it to the standardized format
-3. Output the standardized data to stdout
-
-The standardized format should follow these guidelines:
-- TextObservation.source must be one of: 'user', 'agent', or 'environment'
-- ImageObservation.source must be one of: 'user', 'agent', or 'environment'
-- WebObservation must include a url field
-- WebObservation.viewport_size should be a list, not a tuple
-- WebObservation should include axtree (can be None)
-
-You can run the following command to create a sample standardized file:
-
-```bash
-python datasets/$MY_DATASET/raw_to_standardized.py < datasets/$MY_DATASET/sample_raw.json > datasets/$MY_DATASET/sample_std.json
-```
-
-#### (Optional) Generate Function Thoughts from Standardized Data
-This step enriches the standardized dataset by adding a thoughts for each action that doesn't have thoughts, using in-context learning examples and a language model to simulate the agent's reasoning.
-
-```bash
-export MY_DATASET=dataset_name
-export OPENAI_API_KEY=your_key_here
-cat datasets/$MY_DATASET/full_std.jsonl | python scripts/generate_thoughts_std.py
-```
-
-This script will:
-
-Read all entries from datasets/$MY_DATASET/full_std.jsonl and all saved thoughts from datasets/$MY_DATASET/generated_thoughts.json, generate thoughts if thoughts are missing and not generated already in generated_thoughts.json, save the generated thoughts to datasets/$MY_DATASET/generated_thoughts.json, and lastly write an updated full_std.jsonl that includes the descriptions in-place
-
-Note: If thoughts already exist in generated_thoughts.json, the script will skip regeneration for those entries. Delete the file if you wish to regenerate from scratch.
-
-
-#### Validate the Standardized Format
-
-To ensure your standardized format is correct, run the validation test:
-
-```bash
-python -m pytest tests/test_standardized_schemas.py::test_sample_standardized_against_schema[/workspace/agent-data-collection/datasets/$MY_DATASET/sample_std.json] -v
-```
-
-If the test passes, your standardized format is correct. If not, you'll need to fix the issues in your `raw_to_standardized.py` script.
-
-Once we have our standardized format, we will create a script that converts, line-by-line, a jsonl file in the raw format to one in the standardized format in `raw_to_standardized.py`.
-
-We can then apply this to the sample data to create a sample in the standardized format.
-
-```bash
-export MY_DATASET=dataset_name
-export PYTHONPATH=`pwd`:$PYTHONPATH
-cat datasets/$MY_DATASET/sample_raw.json | python scripts/json_to_jsonl.py | python datasets/$MY_DATASET/raw_to_standardized.py | python scripts/jsonl_to_indented_json.py > datasets/$MY_DATASET/sample_std.json
-```
-
-### Step 3: Convert Standardized Format to SFT Format
-
-Once we have the standardized format, we can convert it to the SFT format:
-
-```bash
-export MY_DATASET=dataset_name
-export PYTHONPATH=`pwd`:$PYTHONPATH
-cat datasets/$MY_DATASET/sample_std.json | python scripts/json_to_jsonl.py | python -u scripts/std_to_sft.py --is_web=no --chunk=all --api_env=execute_ipython_cell > datasets/$MY_DATASET/sample_sft.json
-```
-
-Use `--is_web=yes` for web-based datasets like `mind2web, synatra`.
-Use `--chunk=all` by default.
-Use `--api_env=browser` for web-based datasets like `mind2web, synatra`.
-
-#### Alternative: Using the SWE Agent Specialized Script
-
-For SWE agent datasets (SWE-Gym_OpenHands-Sampled-Trajectories, SWE-smith_5kTrajectories, code_feedback, codeactinstruct, nebius_SWE-agent-trajectories, openhands), you can use the specialized conversion script:
-
-```bash
-export MY_DATASET=dataset_name
-cat datasets/$MY_DATASET/sample_std.json | python std_to_sft_scripts_swe-agent/std_to_sft_SWE_smith.py > datasets/$MY_DATASET/sample_sft.json
-```
-
-This script is specifically designed for SWE agent datasets and handles their unique format requirements.
-
-Run the validator script on the dataset to ensure that it is in the correct format:
-
-```bash
-pytest tests/test_raw_schemas.py tests/test_standardized_schemas.py
-```
-
-### Step 4: Write README
-
-Write a README.md file in the dataset directory that describes the dataset, including the source, the format, and any other relevant information.
-
-## Downloading and Converting Full Data to SFT Format
-
-We prefer to use `.jsonl` files for downloading the full datasets
-
-### Step 1: Download Full Raw Data
-
-```bash
-export MY_DATASET=dataset_name
+# Step 1: Extract raw data
+echo "Extracting raw data..."
 python datasets/$MY_DATASET/extract_raw.py > datasets/$MY_DATASET/full_raw.jsonl
-```
 
-### Step 2: Convert Raw Data to the Standardized Schema
-
-```bash
+# Step 2: Convert to standardized format
+echo "Converting to standardized format..."
 export PYTHONPATH=`pwd`:$PYTHONPATH
 cat datasets/$MY_DATASET/full_raw.jsonl | python datasets/$MY_DATASET/raw_to_standardized.py > datasets/$MY_DATASET/full_std.jsonl
-```
 
-### Step 3: Convert Standardized Data to SFT Format
-
-```bash
-export MY_DATASET=dataset_name
+# Step 3: Convert to agent-specific SFT format
+echo "Converting to SFT format..."
 export PYTHONPATH=`pwd`:$PYTHONPATH
-cat datasets/$MY_DATASET/full_std.jsonl | python -u scripts/std_to_sft.py --is_web=no --chunk=all --keep_system=yes > datasets/$MY_DATASET/full_sft.jsonl
+
+# For OpenHands, there are dataset specific arguments to pass in
+export MY_AGENT=openhands
+cat datasets/$MY_DATASET/full_std.jsonl | python agents/$MY_AGENT/std_to_sft.py --is_web=no --api_env=execute_bash > datasets/$MY_DATASET/full_sft/full_sft_$MY_AGENT.jsonl
+
+# For SWE-agent
+export MY_AGENT=sweagent
+cat datasets/$MY_DATASET/full_std.jsonl | python agents/$MY_AGENT/std_to_sft.py > datasets/$MY_DATASET/full_sft/full_sft_$MY_AGENT.jsonl
 ```
 
-Use `--is_web=yes` for web-based datasets like `mind2web, synatra`.
+### Available Datasets
 
-#### Alternative: Using the SWE Agent Specialized Script for Full Data
+The repository includes datasets from various domains (we welcome more contributions!):
 
-For SWE agent datasets, you can also use the specialized conversion script for full data:
+- **Coding**: `code_feedback`, `codeactinstruct`
+- **Software Engineering**: `swe-smith`, `swe-gym_openhands_sampled_trajectories`,
+- **Web Browsing**: `mind2web`, `nnetnav-live`, `nnetnav-wa`, `go-browse-wa`, `synatra`
+- **Multi-domain**: `agenttuning_*`, `orca_agentinstruct`, `openhands`
+
+### Supported Agents
+
+- **[OpenHands](https://github.com/OpenHands/OpenHands)**: General-purpose coding and web browsing agent
+- **[SWE-agent](https://github.com/SWE-agent/SWE-agent)**: Software engineering focused agent
+- **[AgentLab](https://github.com/ServiceNow/AgentLab)**: Web automation and GUI interaction agent
+
+## Data Flow
+
+The ADP follows a three-stage pipeline:
+
+```
+Raw Dataset      →  Standardized Format  →  Agent Specific SFT Format
+      ↓                   ↓                       ↓
+sample_raw.json  →  sample_std.json      →  sample_sft.json
+```
+
+### 1. Raw Data
+Original format from various sources (research papers, datasets, etc.)
+
+### 2. Standardized Format
+Unified representation using ADP schemas:
+- **Actions**: `MessageAction`, `CodeAction`, `ApiAction`
+- **Observations**: `TextObservation`, `WebObservation`
+- **Trajectory**: Container for complete interaction sequences
+
+### 3. SFT Format
+Agent-specific format ready for supervised fine-tuning
+
+## Documentation
+
+### Schema Documentation
+For detailed information about ADP schemas, data structures, and validation:
+- **[SCHEMA.md](schema/SCHEMA.md)** - Complete schema documentation with examples
+
+### Contributing Guidelines
+To contribute new datasets or agent implementations:
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Step-by-step contribution guide
+
+## Repository Structure
+
+```
+agent-data-protocol/
+├── datasets/           # Dataset implementations
+│   ├── swe-smith/     # Example dataset
+│   │   ├── extract_raw.py
+│   │   ├── raw_to_standardized.py
+│   │   ├── api.py
+│   │   └── sample_*.json
+│   └── ...
+├── agents/            # Agent implementations
+│   ├── openhands/     # OpenHands agent
+│   ├── sweagent/      # SWE-agent
+│   ├── agentlab/      # AgentLab
+│   └── ...
+├── schema/            # ADP schema definitions
+│   ├── SCHEMA.md      # Schema documentation
+│   ├── action/        # Action schemas
+│   ├── observation/   # Observation schemas
+│   └── trajectory.py  # Trajectory container
+├── scripts/           # Utility scripts
+└── tests/            # Validation tests
+```
+
+## Examples
+
+### Converting a Single Dataset
 
 ```bash
-export MY_DATASET=dataset_name
-cat datasets/$MY_DATASET/full_std.jsonl | python std_to_sft_scripts_swe-agent/std_to_sft_SWE_smith.py > datasets/$MY_DATASET/full_sft.jsonl
+# Example: Convert swe-smith dataset for OpenHands
+export MY_DATASET=swe-smith
+export PYTHONPATH=`pwd`:$PYTHONPATH
+
+# Extract and convert
+python datasets/$MY_DATASET/extract_raw.py | \
+python datasets/$MY_DATASET/raw_to_standardized.py | \
+python agents/openhands/std_to_sft.py --is_web=no --api_env=execute_bash \
+> swe_smith_openhands.jsonl
 ```
+
+### Web-based Dataset Example
+
+```bash
+# Example: Convert web browsing dataset
+export MY_DATASET=mind2web
+export PYTHONPATH=`pwd`:$PYTHONPATH
+
+python datasets/$MY_DATASET/extract_raw.py | \
+python datasets/$MY_DATASET/raw_to_standardized.py | \
+python agents/openhands/std_to_sft.py --is_web=yes --api_env=browser \
+> mind2web_openhands.jsonl
+```
+
+## Testing and Validation
+
+Run the test suite to validate data integrity:
+
+```bash
+# Test all datasets
+python -m pytest tests/ -v
+
+# Test specific dataset
+python -m pytest tests/test_standardized_schemas.py -v -k swe-smith
+
+# Test SFT conversion
+python -m pytest tests/test_std_to_sft_conversion.py -v
+```
+
+## Quality Control
+
+The repository includes built-in quality control measures:
+
+- **Schema Validation**: Pydantic models ensure type safety
+- **Pre-commit Hooks**: Code formatting and linting
+- **Automated Testing**: Comprehensive test suite for data validation
+- **Sample Verification**: Each dataset includes validated samples
+
+## License
+
+This project is licensed under the MIT License. Individual datasets may have their own licenses - please check the respective dataset README files.
+
+## Citation
+
+If you use this repository in your research, please cite:
+
+```bibtex
+@misc{song2025agentdataprotocolunifying,
+    title={Agent Data Protocol: Unifying Datasets for Diverse, Effective Fine-tuning of LLM Agents},
+    author={Yueqi Song and Ketan Ramaneti and Zaid Sheikh and Ziru Chen and Boyu Gou and Tianbao Xie and Yiheng Xu and Danyang Zhang and Apurva Gandhi and Fan Yang and Joseph Liu and Tianyue Ou and Zhihao Yuan and Frank Xu and Shuyan Zhou and Xingyao Wang and Xiang Yue and Tao Yu and Huan Sun and Yu Su and Graham Neubig},
+    year={2025},
+    url={https://arxiv.org/abs/2510.24702},
+}
+```
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+
+- Adding new datasets
+- Implementing new agent formats
+- Improving existing conversions
+- Reporting issues and bugs
+
+## Support
+
+For questions, issues, or discussions:
+
+- **Issues**: [GitHub Issues](https://github.com/neulab/agent-data-protocol/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/neulab/agent-data-protocol/discussions)
+
+---
+
+**Note**: This repository is actively maintained and regularly updated with new datasets and agent implementations. Check the [Recent Release](#recent-release) for the latest updates.

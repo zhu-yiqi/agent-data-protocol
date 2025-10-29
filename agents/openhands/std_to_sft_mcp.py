@@ -11,7 +11,6 @@ from agents.openhands.convert_api_to_mcp import (
     get_api_tools,
     get_language_tools,
 )
-from agents.openhands.html_to_axtree import HTMLToAXTree
 from agents.openhands.system_prompt.system import get_system_message
 from agents.openhands.system_prompt.user import get_web_user_message
 from schema.action.api import ApiAction
@@ -20,6 +19,7 @@ from schema.action.message import MessageAction
 from schema.observation.text import TextObservation
 from schema.observation.web import WebObservation
 from schema.trajectory import Trajectory
+from scripts.html_to_axtree import HTMLToAXTree
 
 dataset = os.getenv("MY_DATASET")
 assert dataset, "Please set the environment variable MY_DATASET"
