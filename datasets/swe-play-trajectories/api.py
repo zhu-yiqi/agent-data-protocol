@@ -16,7 +16,7 @@ def str_replace_editor(
     insert_line: Optional[int] = None,
     view_range: Optional[List[int]] = None,
 ) -> str:
-    """A powerful file editor that allows viewing, creating, and editing files.
+    """View, create, and edit files.
 
     Args:
         command (str): The command to execute. One of: view, create, str_replace, insert, undo_edit.
@@ -34,6 +34,7 @@ def str_replace_editor(
         str_replace_editor(command="view", path="/workspace/file.py")
         str_replace_editor(command="create", path="/workspace/new.py", file_text="print('hello')")
         str_replace_editor(command="str_replace", path="/workspace/file.py", old_str="old", new_str="new")
+
     """
     pass
 
@@ -46,6 +47,7 @@ def think(thought: str) -> None:
 
     Example:
         think("I need to first understand the existing code structure before making changes.")
+
     """
     pass
 
@@ -59,5 +61,6 @@ def finish(message: str, task_completed: Literal["true", "false"] = "true") -> N
 
     Example:
         finish(message="Successfully implemented the feature.", task_completed="true")
+
     """
     pass
